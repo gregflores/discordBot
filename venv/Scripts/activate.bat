@@ -1,6 +1,6 @@
 @echo off
 
-set "VIRTUAL_ENV=C:\Users\GregorioF\Documents\PythonScripts\DiscordBot\venv"
+set "VIRTUAL_ENV=C:\Users\flore\Documents\Python Scripts\discordBot\venv"
 
 if defined _OLD_VIRTUAL_PROMPT (
     set "PROMPT=%_OLD_VIRTUAL_PROMPT%"
