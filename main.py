@@ -33,7 +33,7 @@ messages = 0
 
 async def update_stats():
     await client.wait_until_ready()
-    global messages, joined
+    global messages
 
     while not client.is_closed():
         try:
