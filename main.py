@@ -6,15 +6,6 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from pprint import pprint
 
-scope = ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file", 'https://www.googleapis.com/auth/spreadsheets', "https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets.readonly']
-
-creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-
-client = gspread.authorize(creds)
-
-
-mcoc = client.open_by_url('https://docs.google.com/spreadsheets/d/1beR2CAlBQ2XBA3M1jJ1aPEfwE46eQt6LU-lzA0babxQ/edit#gid=0').sheet1
-
 
 def read_token():
     with open('.token', 'r') as f:
@@ -22,14 +13,29 @@ def read_token():
         return lines[0].strip()
 
 
+scope = ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file", 'https://www.googleapis.com/auth/spreadsheets', "https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets.readonly']
+creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+client = gspread.authorize(creds)
+mcoc = client.open_by_url('https://docs.google.com/spreadsheets/d/1beR2CAlBQ2XBA3M1jJ1aPEfwE46eQt6LU-lzA0babxQ/edit#gid=0').sheet1
 token = read_token()
-
 client = discord.Client()
-
-# global ryanspam, willspam
-ryanspam = 2
-willspam = 10
 messages = 0
+
+
+def tier_list(tier):
+    column = {
+        '$beyondgod': 1,
+        '$godtier': 2,
+        '$highdemi': 3,
+        '$lowdemi': 4,
+        '$prettyuseful': 5,
+        '$occasionally': 6,
+        '$memetier': 7}
+    col = mcoc.col_values(column[tier])
+    msg = ''
+    for champ in col[2:]:
+        msg += champ + '\n'
+    return msg
 
 
 async def update_stats():
@@ -38,12 +44,12 @@ async def update_stats():
 
     while not client.is_closed():
         try:
-            with open('stats.txt', 'a') as f:
-                f.write(f'Time: {int(time.time())}, Messages: {messages}\n')
-
-                messages = 0
-
-                await asyncio.sleep(60)
+            with open('stats.txt', 'w') as f:
+                f.write(f'{messages}')
+            with open('stats.txt', 'r') as f:
+                line = f.readline()
+                messages = int(line.strip())
+            await asyncio.sleep(60)
         except Exception as e:
             print(e)
             await asyncio.sleep(60)
@@ -52,32 +58,18 @@ async def update_stats():
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-    await client.change_presence(activity=discord.Game(name='with cum'))
-    # print(client.guilds)
+    await client.change_presence(activity=discord.Game(name='with Will OwO'))
     print(client.guilds[0])
-    # id = client.guilds[0]
-    # print(id.emojis)
+    with open('stats.txt', 'r') as f:
+        line = f.readline()
+        messages = int(line.strip())
 
 
 @client.event
 async def on_message(message):
     global messages
-    global ryanspam
-    global willspam
     messages += 1
     id = client.guilds[0]
-    # print(id)
-    # print(message.author.name)
-    if message.author.name == 'OnlyJust':
-        willspam -= 1
-        if willspam == 0:
-            await message.author.send('OwO')
-            willspam = 100
-    if message.author.name == 'Userface':
-        ryanspam -= 1
-        if ryanspam == 0:
-            await message.author.send('Ryan and Greg 100 years!')
-            ryanspam = 100
     if message.author == client.user:
         return
     if message.content == "$help":
@@ -86,6 +78,7 @@ async def on_message(message):
         embed.add_field(name="$users", value="Prints number of users")
         embed.add_field(name="(╯°□°）╯︵ ┻━┻", value="No")
         embed.add_field(name="$sobble", value=discord.utils.get(id.emojis, name='sobble_o'))
+        embed.add_field(name="$tierlist", value="List of commands for calling MCOC tier list")
         await message.channel.send(content=None, embed=embed)
     elif message.content.startswith('$hello'):
         await message.channel.send('Hello!')
@@ -104,41 +97,17 @@ async def on_message(message):
             msg += champ + '\n'
         await message.channel.send(msg)
     elif message.content.startswith('$godtier'):
-        col = mcoc.col_values(2)
-        msg = ''
-        for champ in col[2:]:
-            msg += champ + '\n'
-        await message.channel.send(msg)
+        await message.channel.send(tier_list(message.content))
     elif message.content.startswith('$highdemi'):
-        col = mcoc.col_values(3)
-        msg = ''
-        for champ in col[2:]:
-            msg += champ + '\n'
-        await message.channel.send(msg)
+        await message.channel.send(tier_list(message.content))
     elif message.content.startswith('$lowdemi'):
-        col = mcoc.col_values(4)
-        msg = ''
-        for champ in col[2:]:
-            msg += champ + '\n'
-        await message.channel.send(msg)
+        await message.channel.send(tier_list(message.content))
     elif message.content.startswith('$prettyuseful'):
-        col = mcoc.col_values(5)
-        msg = ''
-        for champ in col[2:]:
-            msg += champ + '\n'
-        await message.channel.send(msg)
+        await message.channel.send(tier_list(message.content))
     elif message.content.startswith('$occasionally'):
-        col = mcoc.col_values(6)
-        msg = ''
-        for champ in col[2:]:
-            msg += champ + '\n'
-        await message.channel.send(msg)
+        await message.channel.send(tier_list(message.content))
     elif message.content.startswith('$memetier'):
-        col = mcoc.col_values(7)
-        msg = ''
-        for champ in col[2:]:
-            msg += champ + '\n'
-        await message.channel.send(msg)
+        await message.channel.send(tier_list(message.content))
     elif message.content == "$tierlist":
         embed = discord.Embed(title="MCOC Tier List", description="Champs you play")
         embed.add_field(name='$beyondgod', value="Beyond God", inline=False)
@@ -151,9 +120,7 @@ async def on_message(message):
         await message.channel.send(content=None, embed=embed)
     elif message.content.startswith('$buddiestier'):
         buddies = discord.utils.get(id.roles, name='buddies').members
-        # print(buddies)
         buddies = [buddy.nick for buddy in buddies]
-        # print(buddies)
         random.shuffle(buddies)
         msg = ''
         for rank, buddy in enumerate(buddies):
@@ -161,10 +128,8 @@ async def on_message(message):
         await message.channel.send(msg)
     elif message.content.startswith('$truebuddiestier'):
         buddies = discord.utils.get(id.roles, name='buddies').members
-        # print(buddies)
         buddies = [buddy.nick for buddy in buddies]
         buddies.remove('Will')
-        # print(buddies)
         random.shuffle(buddies)
         msg = ''
         for rank, buddy in enumerate(buddies):
@@ -175,5 +140,7 @@ async def on_message(message):
         emoji = discord.utils.get(id.emojis, name='furhot')
         if emoji:
             await message.add_reaction(emoji)
+
+
 client.loop.create_task(update_stats())
 client.run(token)
