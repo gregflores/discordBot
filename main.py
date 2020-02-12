@@ -1,4 +1,5 @@
 import discord
+import random
 import time
 import asyncio
 import gspread
@@ -95,13 +96,80 @@ async def on_message(message):
     elif message.content.startswith('$sobble'):
         emoji = discord.utils.get(id.emojis, name='sobble_o')
         if emoji:
-            await message.add_reaction(emoji)
+            await message.channel.send(emoji)
     elif message.content.startswith('$beyondgod'):
-        cell_list = mcoc.range('A4:A25')
+        col = mcoc.col_values(1)
         msg = ''
-        for champ in cell_list:
-            print(champ.value)
-            msg += champ.value + '\n'
+        for champ in col[2:]:
+            msg += champ + '\n'
+        await message.channel.send(msg)
+    elif message.content.startswith('$godtier'):
+        col = mcoc.col_values(2)
+        msg = ''
+        for champ in col[2:]:
+            msg += champ + '\n'
+        await message.channel.send(msg)
+    elif message.content.startswith('$highdemi'):
+        col = mcoc.col_values(3)
+        msg = ''
+        for champ in col[2:]:
+            msg += champ + '\n'
+        await message.channel.send(msg)
+    elif message.content.startswith('$lowdemi'):
+        col = mcoc.col_values(4)
+        msg = ''
+        for champ in col[2:]:
+            msg += champ + '\n'
+        await message.channel.send(msg)
+    elif message.content.startswith('$prettyuseful'):
+        col = mcoc.col_values(5)
+        msg = ''
+        for champ in col[2:]:
+            msg += champ + '\n'
+        await message.channel.send(msg)
+    elif message.content.startswith('$occasionally'):
+        col = mcoc.col_values(6)
+        msg = ''
+        for champ in col[2:]:
+            msg += champ + '\n'
+        await message.channel.send(msg)
+    elif message.content.startswith('$memetier'):
+        col = mcoc.col_values(7)
+        msg = ''
+        for champ in col[2:]:
+            msg += champ + '\n'
+        await message.channel.send(msg)
+    elif message.content == "$tierlist":
+        embed = discord.Embed(title="MCOC Tier List", description="Champs you play")
+        embed.add_field(name='$beyondgod', value="Beyond God", inline=False)
+        embed.add_field(name="$godtier", value="God Tier", inline=False)
+        embed.add_field(name="$highdemi", value="High Demi God", inline=False)
+        embed.add_field(name="$lowdemi", value='Low Demi God', inline=False)
+        embed.add_field(name="$prettyuseful", value='Pretty Useful', inline=False)
+        embed.add_field(name="$occasionally", value='Occasionally Useful', inline=False)
+        embed.add_field(name="$memetier", value='Meme Tier', inline=False)
+        await message.channel.send(content=None, embed=embed)
+    elif message.content.startswith('$buddiestier'):
+        buddies = discord.utils.get(id.roles, name='buddies').members
+        # print(buddies)
+        buddies = [buddy.nick for buddy in buddies]
+        # print(buddies)
+        random.shuffle(buddies)
+        msg = ''
+        for rank, buddy in enumerate(buddies):
+            msg += '{}. {}\n'.format(rank + 1, buddy)
+        await message.channel.send(msg)
+    elif message.content.startswith('$truebuddiestier'):
+        buddies = discord.utils.get(id.roles, name='buddies').members
+        # print(buddies)
+        buddies = [buddy.nick for buddy in buddies]
+        buddies.remove('Will')
+        # print(buddies)
+        random.shuffle(buddies)
+        msg = ''
+        for rank, buddy in enumerate(buddies):
+            msg += '{}. {}\n'.format(rank + 1, buddy)
+        msg += '{}. {}\n'.format(8, 'Will')
         await message.channel.send(msg)
     if 'OwO' in message.content:
         emoji = discord.utils.get(id.emojis, name='furhot')
